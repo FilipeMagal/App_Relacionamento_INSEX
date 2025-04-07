@@ -40,7 +40,6 @@ public class ProfileServiceImpl implements ProfileService {
         // Adicionando os dados pessoais
         dto.setFirstName(profile.getUser().getFirstName());
         dto.setLastName(profile.getUser().getLastName());
-        dto.setAge(profile.getUser().getAge());
         dto.setGender(profile.getUser().getGender());
 
         dto.setEthnicity(profile.getEthnicity());

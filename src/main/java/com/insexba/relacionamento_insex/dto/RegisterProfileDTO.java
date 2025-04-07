@@ -37,5 +37,7 @@ public class RegisterProfileDTO {
     private String lastName;
     private int age;
     private Gender gender;  // Adicionado o campo de gênero
+    private String birth_Data;
+
 
 }

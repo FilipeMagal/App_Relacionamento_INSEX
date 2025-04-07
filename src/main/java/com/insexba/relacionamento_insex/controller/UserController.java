@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 @RestController
 @RequestMapping("/insexba")
 public class UserController {
@@ -31,10 +34,20 @@ public class UserController {
         user.setFirstName(registerUserDTO.getFirstName());
         user.setLastName(registerUserDTO.getLastName());
         user.setPassword(registerUserDTO.getPassword()); // Supondo que você tenha esse campo no User
-        user.setAge(registerUserDTO.getAge());
         user.setGender(registerUserDTO.getGender());
         user.setEmail(registerUserDTO.getEmail());
         user.setTypeUser(registerUserDTO.getTypeUser()); // Supondo que você tenha esse campo no User
+
+        String birthDataString = registerUserDTO.getBirth_Data();
+        if (birthDataString != null && !birthDataString.isEmpty()) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // Formato esperado da string
+                Date birthData = sdf.parse(birthDataString); // Convertendo para Date
+                user.setBirth_Data(birthData); // Passando o Date para setBirth_Data
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body("Formato de data inválido");
+            }
+        }
 
         // Salva o usuário no banco
         userService.registerUser(user);

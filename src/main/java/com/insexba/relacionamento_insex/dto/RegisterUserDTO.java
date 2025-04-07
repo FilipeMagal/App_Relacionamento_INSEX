@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,9 +20,11 @@ public class RegisterUserDTO {
     private String lastName;
     private String password;
     private String email;
-    private int age;
+    private String birth_Data;
     private Gender gender;
     private TypeUser typeUser;
+
+
 
 
 }

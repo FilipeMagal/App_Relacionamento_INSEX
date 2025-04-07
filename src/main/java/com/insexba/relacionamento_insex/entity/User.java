@@ -1,5 +1,6 @@
     package com.insexba.relacionamento_insex.entity;
 
+    import com.fasterxml.jackson.annotation.JsonFormat;
     import com.insexba.relacionamento_insex.enums.user.Gender;
     import com.insexba.relacionamento_insex.enums.user.TypeUser;
     import jakarta.persistence.*;
@@ -7,6 +8,8 @@
     import lombok.Getter;
     import lombok.NoArgsConstructor;
     import lombok.Setter;
+
+    import java.util.Date;
 
     @Table(name = "user_api")
     @Entity
@@ -35,7 +38,8 @@
         private String email;
 
         @Column(nullable = false)
-        private int age;
+        @JsonFormat(pattern = "yyyy-MM-dd")
+        private Date birth_Data;
 
         @Enumerated(EnumType.STRING)
         @Column(nullable = false)
