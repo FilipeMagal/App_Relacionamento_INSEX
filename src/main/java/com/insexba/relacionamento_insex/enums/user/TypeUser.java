@@ -1,4 +1,4 @@
-package com.insexba.relacionamento_insex.enums;
+package com.insexba.relacionamento_insex.enums.user;
 
 import lombok.Getter;
 
