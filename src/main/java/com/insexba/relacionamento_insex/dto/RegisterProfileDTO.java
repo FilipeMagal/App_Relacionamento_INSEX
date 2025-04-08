@@ -1,5 +1,6 @@
 package com.insexba.relacionamento_insex.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.insexba.relacionamento_insex.enums.profile.Desired_Relationship;
 import com.insexba.relacionamento_insex.enums.profile.Education;
 import com.insexba.relacionamento_insex.enums.profile.Ethnicity;
@@ -9,6 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Date;
 
 @Getter
 @Setter
@@ -37,7 +40,6 @@ public class RegisterProfileDTO {
     private String lastName;
     private int age;
     private Gender gender;  // Adicionado o campo de gênero
-    private String birth_Data;
 
 
 }
