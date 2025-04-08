@@ -38,8 +38,8 @@ public class Profile {
 
     private String profession;
 
-    @OneToOne
-    @JoinColumn(name = "id", referencedColumnName = "id", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
     //Falta a foto de perfil

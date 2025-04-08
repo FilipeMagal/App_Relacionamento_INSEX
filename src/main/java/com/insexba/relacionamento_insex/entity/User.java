@@ -9,7 +9,10 @@
     import lombok.NoArgsConstructor;
     import lombok.Setter;
 
+    import java.time.LocalDate;
+    import java.time.Period;
     import java.util.Date;
+    import java.util.List;
 
     @Table(name = "user_api")
     @Entity
@@ -37,8 +40,8 @@
         @Column(nullable = false, unique = true)
         private String email;
 
-        @Column(nullable = false)
-        @JsonFormat(pattern = "yyyy-MM-dd")
+        @Column(name = "birth_data", nullable = false)
+        @Temporal(TemporalType.DATE)
         private Date birth_Data;
 
         @Enumerated(EnumType.STRING)
@@ -47,6 +50,17 @@
 
         @Enumerated(EnumType.STRING)
         private TypeUser typeUser;
+
+        @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+        private Profile profile;
+
+        // Metodo para calcular a idade
+        public int getAge() {
+            LocalDate today = LocalDate.now();
+            LocalDate birthDate = new java.sql.Date(birth_Data.getTime()).toLocalDate();
+            return Period.between(birthDate, today).getYears();
+        }
+
 
 
 

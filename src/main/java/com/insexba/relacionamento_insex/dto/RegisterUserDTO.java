@@ -1,5 +1,6 @@
 package com.insexba.relacionamento_insex.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.insexba.relacionamento_insex.enums.user.Gender;
 import com.insexba.relacionamento_insex.enums.user.TypeUser;
 import lombok.AllArgsConstructor;
@@ -20,9 +21,12 @@ public class RegisterUserDTO {
     private String lastName;
     private String password;
     private String email;
-    private String birth_Data;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date birth_Data;
     private Gender gender;
     private TypeUser typeUser;
+    private int agr;
 
 
 

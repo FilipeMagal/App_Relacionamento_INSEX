@@ -37,20 +37,11 @@ public class UserController {
         user.setGender(registerUserDTO.getGender());
         user.setEmail(registerUserDTO.getEmail());
         user.setTypeUser(registerUserDTO.getTypeUser()); // Supondo que você tenha esse campo no User
+        user.setBirth_Data(registerUserDTO.getBirth_Data());
 
-        String birthDataString = registerUserDTO.getBirth_Data();
-        if (birthDataString != null && !birthDataString.isEmpty()) {
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // Formato esperado da string
-                Date birthData = sdf.parse(birthDataString); // Convertendo para Date
-                user.setBirth_Data(birthData); // Passando o Date para setBirth_Data
-            } catch (Exception e) {
-                return ResponseEntity.badRequest().body("Formato de data inválido");
-            }
-        }
 
         // Salva o usuário no banco
-        userService.registerUser(user);
+        userService.registerUser(user.getFirstName(), user.getLastName(), user.getPassword(), user.getEmail(), user.getBirth_Data(), user.getGender(), user.getTypeUser());
 
         return ResponseEntity.ok("Usuário registrado com sucesso!");
     }
