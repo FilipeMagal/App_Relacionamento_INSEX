@@ -1,5 +1,6 @@
     package com.insexba.relacionamento_insex.controller;
 
+    import com.insexba.relacionamento_insex.dto.MatchedProfileDTO;
     import com.insexba.relacionamento_insex.dto.RegisterProfileDTO;
     import com.insexba.relacionamento_insex.entity.Profile;
     import com.insexba.relacionamento_insex.entity.User;
@@ -11,6 +12,7 @@
     import org.springframework.http.ResponseEntity;
     import org.springframework.web.bind.annotation.*;
 
+    import java.util.List;
     import java.util.Optional;
 
     @RestController
@@ -65,12 +67,22 @@
             RegisterProfileDTO profileDTO = profileService.getProfileByUserId(userId);
 
             if (profileDTO != null) {
-                // Se o perfil for encontrado, retorna a resposta com status 200 (OK)
                 return ResponseEntity.ok(profileDTO);
             }
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
             }
+
+        @GetMapping("/user/{userId}/discover")
+        public ResponseEntity<List<MatchedProfileDTO>> discoverProfiles(@PathVariable Integer userId) {
+            List<MatchedProfileDTO> profiles = profileService.getDiscoverProfiles(userId);
+
+            return ResponseEntity.ok(profiles);
+
+
         }
+
+
+    }
 
 
 

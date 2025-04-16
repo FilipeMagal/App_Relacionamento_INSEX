@@ -5,12 +5,16 @@ import lombok.Getter;
 @Getter
 public enum TypeUser {
     Usuario ("Usuário"),
-    Administradora ("Administradora"),
-    Tecnico ("Técnico");
+    Administrador ("Administrador");
 
-    private final String type;
+    private final String role;
 
-    TypeUser(String type) {
-        this.type = type;
+    TypeUser(String role) {
+        this.role = role;
     }
+
+    public String getRole(){
+        return role;
+    }
+
 }
