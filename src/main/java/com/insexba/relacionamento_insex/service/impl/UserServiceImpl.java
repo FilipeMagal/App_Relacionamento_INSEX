@@ -22,23 +22,30 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void registerUser(String firstName, String lastName, String password, String email, Date birth_Data, Gender gender, TypeUser typeUser) {
+    public void registerUser(String firstName, String lastName, String password, String email, Date birthData, Gender gender, TypeUser typeUser) {
         User user = new User();
         if (userRepository.existsByEmail(email)) {
             throw new RuntimeException("Usuário já cadastrado com este email");
         }
-        java.sql.Date sqlDate = new java.sql.Date(birth_Data.getTime());
-        user.setBirth_Data(sqlDate);
+        java.sql.Date sqlDate = new java.sql.Date(birthData.getTime());
+        user.setBirthData(sqlDate);
 
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setPassword(password);
         user.setEmail(email);
         user.setGender(gender);
-        user.setTypeUser(typeUser);
+
+
+        // Se typeUser for null, define como USUARIO
+        if (typeUser == null) {
+            user.setTypeUser(TypeUser.Usuario); // enum padrão
+        } else {
+            user.setTypeUser(typeUser);
+        }
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String formattedDate = dateFormat.format(user.getBirth_Data());
+        String formattedDate = dateFormat.format(user.getBirthData());
 
         userRepository.save(user);
     }

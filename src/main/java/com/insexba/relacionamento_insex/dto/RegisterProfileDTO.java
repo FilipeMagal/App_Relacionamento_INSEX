@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -40,6 +41,8 @@ public class RegisterProfileDTO {
     private String lastName;
     private int age;
     private Gender gender;  // Adicionado o campo de gênero
+    private List<String> interests; // Aqui vem os nomes dos interesses
+
 
 
 }

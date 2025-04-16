@@ -23,10 +23,12 @@ public class RegisterUserDTO {
     private String email;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date birth_Data;
+    private Date birthData;
     private Gender gender;
     private TypeUser typeUser;
-    private int agr;
+    private int age;
+
+
 
 
 
