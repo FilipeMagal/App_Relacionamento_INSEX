@@ -42,6 +42,7 @@ public class Profile {
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
-    //Falta a foto de perfil
+    @Column(name = "profile_picture", columnDefinition = "bytea")
+    private byte[] profilePicture;
 
 }

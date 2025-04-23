@@ -5,6 +5,7 @@ import com.insexba.relacionamento_insex.dto.RegisterProfileDTO;
 import com.insexba.relacionamento_insex.entity.Interest;
 import com.insexba.relacionamento_insex.entity.Profile;
 import com.insexba.relacionamento_insex.entity.User;
+import com.insexba.relacionamento_insex.repository.InterestRepository;
 import com.insexba.relacionamento_insex.repository.ProfileRepository;
 import com.insexba.relacionamento_insex.repository.UserRepository;
 import com.insexba.relacionamento_insex.service.ProfileService;
@@ -12,8 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,6 +28,9 @@ public class ProfileServiceImpl implements ProfileService {
     ProfileRepository profileRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    InterestRepository interestRepository;
+
 
     @Override
     public void registerProfile(Profile profile) {
@@ -35,8 +41,6 @@ public class ProfileServiceImpl implements ProfileService {
     public RegisterProfileDTO convertToDTO(Profile profile) {
         User user = profile.getUser();
         RegisterProfileDTO dto = new RegisterProfileDTO();
-        dto.setId(profile.getId());
-
         // Adicionando os dados pessoais
         dto.setFirstName(profile.getUser().getFirstName());
         dto.setLastName(profile.getUser().getLastName());
@@ -48,14 +52,12 @@ public class ProfileServiceImpl implements ProfileService {
         dto.setDesiredRelationship(profile.getDesired_Relationship());
         dto.setBio(profile.getBio());
         dto.setProfession(profile.getProfession());
-        dto.setUserId(profile.getUser().getId());
         dto.setAge(user.getAge());
 
         dto.setInterests(user.getInterests().stream()
                 .map(Interest::getName)
                 .toList()
         );
-
 
 
         return dto;
@@ -66,8 +68,8 @@ public class ProfileServiceImpl implements ProfileService {
         // Buscar usuário e perfil juntos
         Optional<Profile> profileOptional = profileRepository.findByUserId(userId);
         try {
-                Profile profile = profileOptional.get();
-                return convertToDTO(profile);
+            Profile profile = profileOptional.get();
+            return convertToDTO(profile);
 
         } catch (Exception e) {
             // Se o perfil não for encontrado
@@ -105,11 +107,19 @@ public class ProfileServiceImpl implements ProfileService {
                     .filter(currentUserInterests.stream().map(Interest::getName).collect(Collectors.toSet())::contains)
                     .collect(Collectors.toList());
 
+
+
             if (!common.isEmpty()) {
                 double matchPercent = currentUserInterests.isEmpty() ? 0.0 :
                         ((double) common.size() / currentUserInterests.size()) * 100;
 
                 Profile profile = other.getProfile();
+
+                String base64Image = null;
+                if (profile.getProfilePicture() != null) {
+                    base64Image = Base64.getEncoder().encodeToString(profile.getProfilePicture());
+                }
+
                 if (profile != null) {
                     matchedProfiles.add(new MatchedProfileDTO(
                             other.getId(),
@@ -119,7 +129,8 @@ public class ProfileServiceImpl implements ProfileService {
                             profile.getBio(),
                             profile.getProfession(),
                             common,
-                            matchPercent
+                            matchPercent,
+                            base64Image
                     ));
                 }
             }
@@ -128,5 +139,48 @@ public class ProfileServiceImpl implements ProfileService {
         matchedProfiles.sort((a, b) -> Double.compare(b.getMatchPercentage(), a.getMatchPercentage()));
         return matchedProfiles;
     }
+
+    @Override
+    public void changeProfile(Integer userId, RegisterProfileDTO dto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        Profile profile = profileRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Perfil não encontrado"));
+
+        profile.setEthnicity(dto.getEthnicity());
+        profile.setEducation(dto.getEducation());
+        profile.setMarital_Status(dto.getMaritalStatus());
+        profile.setDesired_Relationship(dto.getDesiredRelationship());
+        profile.setBio(dto.getBio());
+        profile.setProfession(dto.getProfession());
+
+        try {
+            MultipartFile file = dto.getProfilePicture();
+            if (file != null && !file.isEmpty()) {
+                profile.setProfilePicture(file.getBytes());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao processar imagem");
+        }
+
+        if (dto.getInterests() != null) {
+            List<Interest> updatedInterests = dto.getInterests().stream()
+                    .map(name -> interestRepository.findByName(name)
+                            .orElseGet(() -> {
+                                Interest newInterest = new Interest();
+                                newInterest.setName(name);
+                                return interestRepository.save(newInterest);
+                            })
+                    )
+                    .collect(Collectors.toList());
+
+            user.setInterests(updatedInterests);
+        }
+
+        profileRepository.save(profile);
+        userRepository.save(user);
+    }
+
 
 }

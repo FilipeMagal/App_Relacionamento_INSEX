@@ -18,4 +18,5 @@ public class MatchedProfileDTO {
     private String profession;
     private List<String> commonInterests;
     private double matchPercentage;
+    private String profilePictureBase64;
 }
