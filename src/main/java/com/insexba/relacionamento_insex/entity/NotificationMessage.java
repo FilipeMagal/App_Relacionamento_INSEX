@@ -1,20 +1,22 @@
 package com.insexba.relacionamento_insex.entity;
 
-import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Map;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class PushNotificationRequest {
+public class NotificationMessage {
+    private String recipientToken;
     private String title;
-    private String message;
-    private String topic;
-    private String token;
+    private String body;
+    private String image;
+    private Map<String, String> data;
 
 }
 

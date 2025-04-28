@@ -17,17 +17,25 @@ public class FCMInitializer {
     @Value("${app.firebase-configuration-file}")
     private String firebaseConfigPath;
     Logger logger = LoggerFactory.getLogger(FCMInitializer.class);
+
     @PostConstruct
     public void initialize() {
         try {
+            // Verifica se o arquivo de configuração foi encontrado
+            logger.info("Initializing Firebase with config file: {}", firebaseConfigPath);
+
+            // Configura o Firebase com as credenciais do arquivo JSON
             FirebaseOptions options = new FirebaseOptions.Builder()
-                    .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())).build();
+                    .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(firebaseConfigPath).getInputStream()))
+                    .build();
+
+            // Verifica se o Firebase já foi inicializado
             if (FirebaseApp.getApps().isEmpty()) {
                 FirebaseApp.initializeApp(options);
                 logger.info("Firebase application has been initialized");
             }
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            logger.error("Error initializing Firebase: ", e);
         }
     }
 }
