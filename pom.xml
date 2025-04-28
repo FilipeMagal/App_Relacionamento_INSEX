@@ -93,6 +93,11 @@
 			<artifactId>postgresql</artifactId>
 			<version>42.7.4</version>
 		</dependency>
+		<dependency>
+			<groupId>com.google.firebase</groupId>
+			<artifactId>firebase-admin</artifactId>
+			<version>9.2.0</version> <!-- ou uma versão mais recente -->
+		</dependency>
 	</dependencies>
 
 	<build>
