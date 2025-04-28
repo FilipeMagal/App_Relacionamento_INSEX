@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
+
 
 @RestController
 @RequestMapping("auth")
@@ -49,15 +51,12 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody @Valid RegisterDTO dados){
-        if (this.userRepository.findByEmail(dados.email()) != null) return ResponseEntity.badRequest().build();
-
-        String senhaEncriptada = new BCryptPasswordEncoder().encode(dados.password());
-
-        if (dados.birthData() == null) {
-            return ResponseEntity.badRequest().body("A data de nascimento é obrigatória.");
+        if (this.userRepository.findByEmail(dados.email()) != null) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(Collections.singletonMap("message", "Usuário já cadastrado com o email"));
         }
-
-
+        String senhaEncriptada = new BCryptPasswordEncoder().encode(dados.password());
 
         // Criar novo usuário
         User newUser = new User(
@@ -69,8 +68,6 @@ public class AuthenticationController {
                 dados.gender(),
                 dados.user()
         );
-
-
 
         this.userRepository.save(newUser);
         return ResponseEntity.ok("Usuário cadastrado com sucesso!");

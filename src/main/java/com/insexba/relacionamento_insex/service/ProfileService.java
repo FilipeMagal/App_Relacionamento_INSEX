@@ -12,5 +12,5 @@ public interface ProfileService {
     void registerProfile(Profile profile);
     RegisterProfileDTO getProfileByUserId (Integer userId);
     public List<MatchedProfileDTO> getDiscoverProfiles(Integer userId);
-
+    void changeProfile(Integer userId, RegisterProfileDTO registerProfileDTO);
 }
