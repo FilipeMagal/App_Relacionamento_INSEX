@@ -14,4 +14,5 @@ public interface ProfileRepository extends JpaRepository<Profile, Integer> {
     @Query("SELECT p FROM Profile p JOIN FETCH p.user u WHERE u.id = :userId")
     Optional<Profile> findByUserId(@Param("userId") Integer userId);
     boolean existsByUser(User user);
+
 }

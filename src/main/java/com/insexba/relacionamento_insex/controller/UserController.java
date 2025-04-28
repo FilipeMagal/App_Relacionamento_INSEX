@@ -22,29 +22,6 @@ public class UserController {
     @Autowired
     InterestRepository interestRepository;
 
-    @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody RegisterUserDTO registerUserDTO) {
-            // Verifica se o email já está registrado
-        if (userRepository.existsByEmail(registerUserDTO.getEmail())) {
-            return ResponseEntity.badRequest().body("Usuário já existe com o email informado");
-        }
-
-        // Cria o objeto Usuario e converte os dados do DTO
-        User user = new User();
-        user.setFirstName(registerUserDTO.getFirstName());
-        user.setLastName(registerUserDTO.getLastName());
-        user.setPassword(registerUserDTO.getPassword());
-        user.setGender(registerUserDTO.getGender());
-        user.setEmail(registerUserDTO.getEmail());
-        user.setTypeUser(registerUserDTO.getTypeUser());
-        user.setBirthData(registerUserDTO.getBirthData());
-
-
-        // Salva o usuário no banco
-        userService.registerUser(user.getFirstName(), user.getLastName(), user.getPassword(), user.getEmail(), user.getBirthData(), user.getGender(), user.getTypeUser());
-
-        return ResponseEntity.ok("Usuário registrado com sucesso!");
-    }
 
     @PostMapping("/{userId}/interests")
     public ResponseEntity<?> addInterests(@PathVariable Integer userId,
@@ -62,9 +39,6 @@ public class UserController {
                 user.getInterests().add(interest);
             }
         }
-
-
-
 
         userRepository.save(user);
         return ResponseEntity.ok("Interesses adicionados com sucesso!");
