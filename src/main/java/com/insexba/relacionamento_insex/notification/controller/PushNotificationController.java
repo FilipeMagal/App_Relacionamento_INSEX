@@ -1,8 +1,8 @@
-package com.insexba.relacionamento_insex.controller;
+package com.insexba.relacionamento_insex.notification.controller;
 
-import com.insexba.relacionamento_insex.entity.NotificationMessage;
-import com.insexba.relacionamento_insex.entity.PushNotificationResponse;
-import com.insexba.relacionamento_insex.service.impl.FirebaseMessageService;
+import com.insexba.relacionamento_insex.notification.entity.NotificationMessage;
+import com.insexba.relacionamento_insex.notification.entity.PushNotificationResponse;
+import com.insexba.relacionamento_insex.notification.service.FirebaseMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 

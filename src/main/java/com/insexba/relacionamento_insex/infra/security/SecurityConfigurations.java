@@ -28,10 +28,10 @@ public class SecurityConfigurations {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/insexba/register/profile").authenticated()  // Apenas usuários autenticados podem acessar esse endpoint
+                        .requestMatchers(HttpMethod.POST, "/insexba/register/profile").permitAll()  // Apenas usuários autenticados podem acessar esse endpoint
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/notification/token").permitAll()
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

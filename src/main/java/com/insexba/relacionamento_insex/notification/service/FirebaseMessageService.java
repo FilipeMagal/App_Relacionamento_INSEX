@@ -1,11 +1,10 @@
-package com.insexba.relacionamento_insex.service.impl;
+package com.insexba.relacionamento_insex.notification.service;
 
-import com.google.firebase.FirebaseException;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
-import com.insexba.relacionamento_insex.entity.NotificationMessage;
+import com.insexba.relacionamento_insex.notification.entity.NotificationMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
