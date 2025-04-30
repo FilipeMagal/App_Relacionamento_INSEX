@@ -112,6 +112,20 @@
             }
         }
 
+        @PostMapping("/interact/{targetUserId}")
+        public ResponseEntity<String> interactWithUser(
+                @AuthenticationPrincipal User currentUser, // ou pegue o ID via token
+                @PathVariable Integer targetUserId,
+                @RequestParam boolean liked) {
+
+            try {
+                String message = profileService.interactWithProfile(currentUser.getId(), targetUserId, liked);
+                return ResponseEntity.ok(message);
+            } catch (RuntimeException e) {
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
+        }
+
 
     }
 

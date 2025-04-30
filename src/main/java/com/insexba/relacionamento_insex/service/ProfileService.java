@@ -13,4 +13,6 @@ public interface ProfileService {
     RegisterProfileDTO getProfileByUserId (Integer userId);
     public List<MatchedProfileDTO> getDiscoverProfiles(Integer userId);
     void changeProfile(Integer userId, RegisterProfileDTO registerProfileDTO);
+    String interactWithProfile(Integer originUserId, Integer targetUserId, boolean liked);
+
 }

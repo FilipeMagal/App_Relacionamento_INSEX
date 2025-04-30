@@ -1,4 +1,4 @@
-package com.insexba.relacionamento_insex.service.impl;
+package com.insexba.relacionamento_insex.notification;
 
 import org.springframework.stereotype.Service;
 import java.io.IOException;

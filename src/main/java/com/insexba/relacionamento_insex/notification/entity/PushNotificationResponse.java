@@ -1,6 +1,5 @@
-package com.insexba.relacionamento_insex.entity;
+package com.insexba.relacionamento_insex.notification.entity;
 
-import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

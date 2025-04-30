@@ -2,16 +2,10 @@ package com.insexba.relacionamento_insex.service.impl;
 
 import com.insexba.relacionamento_insex.dto.MatchedProfileDTO;
 import com.insexba.relacionamento_insex.dto.RegisterProfileDTO;
-import com.insexba.relacionamento_insex.entity.Interest;
-import com.insexba.relacionamento_insex.entity.Profile;
-import com.insexba.relacionamento_insex.entity.User;
-import com.insexba.relacionamento_insex.repository.InterestRepository;
-import com.insexba.relacionamento_insex.repository.ProfileRepository;
-import com.insexba.relacionamento_insex.repository.UserRepository;
+import com.insexba.relacionamento_insex.entity.*;
+import com.insexba.relacionamento_insex.repository.*;
 import com.insexba.relacionamento_insex.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,6 +24,10 @@ public class ProfileServiceImpl implements ProfileService {
     UserRepository userRepository;
     @Autowired
     InterestRepository interestRepository;
+    @Autowired
+    UserMatchInteractionRepository interactionRepository;
+    @Autowired
+    MatchRepository matchRepository;
 
 
     @Override
@@ -84,6 +82,11 @@ public class ProfileServiceImpl implements ProfileService {
         User currentUser = userRepository.findById(currentUserId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
+        List<UserMatchInteraction> interactions = interactionRepository.findByOriginUser(currentUser);
+        List<Integer> alreadyInteractedUserIds = interactions.stream()
+                .map(interaction -> interaction.getTargetUser().getId())
+                .collect(Collectors.toList());
+
         List<Interest> currentUserInterests = currentUser.getInterests();
         List<User> allUsers = userRepository.findAll();
 
@@ -92,6 +95,8 @@ public class ProfileServiceImpl implements ProfileService {
         for (User other : allUsers) {
             // Pular o próprio usuário
             if (other.getId().equals(currentUserId)) continue;
+            if (alreadyInteractedUserIds.contains(other.getId())) continue;
+
 
             // Filtrar por gênero diferente
             if (other.getGender() == currentUser.getGender()) continue;
@@ -180,6 +185,49 @@ public class ProfileServiceImpl implements ProfileService {
 
         profileRepository.save(profile);
         userRepository.save(user);
+    }
+
+    public String interactWithProfile(Integer originUserId, Integer targetUserId, boolean liked) {
+        if (originUserId.equals(targetUserId)) {
+            throw new RuntimeException("Você não pode interagir com seu próprio perfil.");
+        }
+
+        User originUser = userRepository.findById(originUserId)
+                .orElseThrow(() -> new RuntimeException("Usuário de origem não encontrado"));
+
+        User targetUser = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new RuntimeException("Usuário de destino não encontrado"));
+
+        // Verificar se já existe interação
+        Optional<UserMatchInteraction> existing = interactionRepository.findByOriginUserAndTargetUser(originUser, targetUser);
+        if (existing.isPresent()) {
+            return "Você já interagiu com esse usuário.";
+        }
+
+        // Criar nova interação
+        UserMatchInteraction interaction = new UserMatchInteraction();
+        interaction.setOriginUser(originUser);
+        interaction.setTargetUser(targetUser);
+        interaction.setLiked(liked);
+        interaction.setInteractionTime(java.time.LocalDateTime.now());
+        interactionRepository.save(interaction);
+
+        // Se foi um like, verificar reciprocidade
+        if (liked) {
+            Optional<UserMatchInteraction> reciprocal = interactionRepository.findByOriginUserAndTargetUser(targetUser, originUser);
+            if (reciprocal.isPresent() && Boolean.TRUE.equals(reciprocal.get().getLiked())) {
+                // Criar match
+                Match match = new Match();
+                match.setUser1(originUser);
+                match.setUser2(targetUser);
+                match.setMatchedAt(java.time.LocalDateTime.now());
+                matchRepository.save(match);
+
+                return "É um match!";
+            }
+        }
+
+        return liked ? "Like registrado!" : "Dislike registrado!";
     }
 
 
