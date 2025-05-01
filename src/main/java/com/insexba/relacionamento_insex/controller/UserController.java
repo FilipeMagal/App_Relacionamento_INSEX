@@ -1,10 +1,12 @@
 package com.insexba.relacionamento_insex.controller;
 
+import com.insexba.relacionamento_insex.dto.MatchedProfileDTO;
 import com.insexba.relacionamento_insex.dto.RegisterUserDTO;
 import com.insexba.relacionamento_insex.entity.Interest;
 import com.insexba.relacionamento_insex.entity.User;
 import com.insexba.relacionamento_insex.repository.InterestRepository;
 import com.insexba.relacionamento_insex.repository.UserRepository;
+import com.insexba.relacionamento_insex.service.ProfileService;
 import com.insexba.relacionamento_insex.service.UserService;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ public class UserController {
     UserRepository userRepository;
     @Autowired
     InterestRepository interestRepository;
+    @Autowired
+    ProfileService profileService;
 
 
     @PostMapping("/interests")
@@ -59,6 +63,13 @@ public class UserController {
 
         // Retorna uma resposta de sucesso
         return ResponseEntity.ok("Interesses adicionados com sucesso!");
+    }
+
+
+    @GetMapping("/user/matches")
+    public ResponseEntity<List<MatchedProfileDTO>> getUserMatches(@AuthenticationPrincipal User user) {
+        List<MatchedProfileDTO> matches = profileService.getUserMatches(user.getId());
+        return ResponseEntity.ok(matches);
     }
 
 

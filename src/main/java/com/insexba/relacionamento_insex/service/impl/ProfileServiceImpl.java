@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.postgresql.core.JavaVersion.other;
+
 @Service
 public class ProfileServiceImpl implements ProfileService {
 
@@ -77,6 +79,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     // Lógica de interesses do aplicativo para o match
 
+    // Lógica de interesses do aplicativo para o match
     @Override
     public List<MatchedProfileDTO> getDiscoverProfiles(Integer currentUserId) {
         User currentUser = userRepository.findById(currentUserId)
@@ -97,14 +100,12 @@ public class ProfileServiceImpl implements ProfileService {
             if (other.getId().equals(currentUserId)) continue;
             if (alreadyInteractedUserIds.contains(other.getId())) continue;
 
-
             // Filtrar por gênero diferente
             if (other.getGender() == currentUser.getGender()) continue;
 
-            List<Interest> otherInterests = other.getInterests();
-
-            // Verificar se outros interesses não são nulos
-            if (otherInterests == null) continue;
+            // Obter os interesses do outro usuário
+            List<Interest> otherInterests = other.getInterests();  // Aqui você define a lista de interesses do outro usuário
+            if (otherInterests == null || otherInterests.isEmpty()) continue;  // Verifica se os interesses do outro usuário são nulos ou vazios
 
             // Encontrar interesses em comum
             List<String> common = otherInterests.stream()
@@ -112,11 +113,12 @@ public class ProfileServiceImpl implements ProfileService {
                     .filter(currentUserInterests.stream().map(Interest::getName).collect(Collectors.toSet())::contains)
                     .collect(Collectors.toList());
 
-
-
             if (!common.isEmpty()) {
                 double matchPercent = currentUserInterests.isEmpty() ? 0.0 :
                         ((double) common.size() / currentUserInterests.size()) * 100;
+
+                if (otherInterests == null || otherInterests.isEmpty()) continue;  // Já existe
+                if (currentUserInterests == null || currentUserInterests.isEmpty()) continue;  // Garantir que o usuário atual tenha interesses
 
                 Profile profile = other.getProfile();
 
@@ -144,6 +146,7 @@ public class ProfileServiceImpl implements ProfileService {
         matchedProfiles.sort((a, b) -> Double.compare(b.getMatchPercentage(), a.getMatchPercentage()));
         return matchedProfiles;
     }
+
 
     @Override
     public void changeProfile(Integer userId, RegisterProfileDTO dto) {
@@ -228,6 +231,32 @@ public class ProfileServiceImpl implements ProfileService {
         }
 
         return liked ? "Like registrado!" : "Dislike registrado!";
+    }
+
+    public List<MatchedProfileDTO> getUserMatches(Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        List<Match> matches = matchRepository.findByUser1OrUser2(user, user);
+
+        return matches.stream().map(match -> {
+            User matchedUser = match.getUser1().equals(user) ? match.getUser2() : match.getUser1();
+            Profile profile = matchedUser.getProfile();
+            String base64Image = profile.getProfilePicture() != null ?
+                    Base64.getEncoder().encodeToString(profile.getProfilePicture()) : null;
+
+            return new MatchedProfileDTO(
+                    matchedUser.getId(),
+                    matchedUser.getFirstName(),
+                    matchedUser.getLastName(),
+                    matchedUser.getAge(),
+                    profile.getBio(),
+                    profile.getProfession(),
+                    matchedUser.getInterests().stream().map(Interest::getName).collect(Collectors.toList()),
+                    100.0,
+                    base64Image
+            );
+        }).toList();
     }
 
 
