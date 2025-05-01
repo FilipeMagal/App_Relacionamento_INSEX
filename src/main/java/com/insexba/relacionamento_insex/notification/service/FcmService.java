@@ -1,4 +1,4 @@
-package com.insexba.relacionamento_insex.service.impl;
+package com.insexba.relacionamento_insex.notification.service;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
