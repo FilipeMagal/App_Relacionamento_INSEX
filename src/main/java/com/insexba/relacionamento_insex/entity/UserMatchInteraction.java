@@ -30,4 +30,11 @@ public class UserMatchInteraction {
     private Boolean liked; // true = like, false = dislike
 
     private LocalDateTime interactionTime;
+
+    public UserMatchInteraction(User originUser, User targetUser, Boolean liked, LocalDateTime interactionTime) {
+        this.originUser = originUser;
+        this.targetUser = targetUser;
+        this.liked = liked;
+        this.interactionTime = interactionTime;
+    }
 }

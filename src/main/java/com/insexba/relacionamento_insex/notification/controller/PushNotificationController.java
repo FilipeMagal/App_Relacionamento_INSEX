@@ -20,10 +20,6 @@ public class PushNotificationController {
     @Autowired
     FirebaseMessageService firebaseMessageService;
 
-
-
-
-
     @PostMapping("/notification/token")
     public ResponseEntity sendTokenNotification(@RequestBody NotificationMessage request) {
         firebaseMessageService.sendNotificationByToken(request);
