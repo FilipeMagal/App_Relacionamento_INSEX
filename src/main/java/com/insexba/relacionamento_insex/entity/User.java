@@ -74,6 +74,9 @@
         @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
         private Profile profile;
 
+        private String fcmToken;
+
+
         // Metodo para calcular a idade
         public int getAge() {
             LocalDate today = LocalDate.now();
